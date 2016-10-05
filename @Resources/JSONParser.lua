@@ -98,7 +98,7 @@ end
 
 -- Public values and functions.
 
-function json.stringify(obj, as_key)
+function JSONStringify(obj, as_key)
   local s = {}  -- We'll build the string as an array of strings to be concatenated.
   local kind = kind_of(obj)  -- This is 'array' if it's an array or type(obj) otherwise.
   if kind == 'array' then
@@ -136,7 +136,7 @@ end
 
 json.null = {}  -- This is a one-off table to represent the null value.
 
-function json.parse(str, pos, end_delim)
+function JSONParse(str, pos, end_delim)
   pos = pos or 1
   if pos > #str then error('Reached unexpected end of input.') end
   local pos = pos + #str:match('^%s*', pos)  -- Skip whitespace.
