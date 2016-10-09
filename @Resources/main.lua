@@ -9,7 +9,7 @@ function Initialize()
   __skinHeight=30
   
   -- Constants
-  MAX_COUNT=9
+  MAX_COUNT=10
   MEASURE_COUNT = SKIN:GetVariable('measureCount', MAX_COUNT)
   WIDTH=SKIN:GetVariable('width', 300)
   
@@ -65,7 +65,7 @@ function ParseFeatured()
     table.insert(__streams, stream)
 	end
   
-  PrintStreams()
+  PrintStreams(true)
 end
 
 function ParseStreams()
@@ -91,16 +91,16 @@ function ParseStreams()
     table.insert(__streams, streamObj)
 	end
   
-  PrintStreams()
+  PrintStreams(true)
 end
 
-function PrintStreams()
+function PrintStreams(reloadImages)
   __currentlyLoaded = math.min(MEASURE_COUNT+1,#__streams)
   __skinHeight=30
   local index=0
   for key, stream in pairs(__streams) do
     if __currentlyLoaded<=index then break end
-    PrintStream(index,stream)
+    PrintStream(index,stream,reloadImages)
     index=index+1
   end
   
@@ -120,7 +120,7 @@ function HideAllStreams(index)
   end
 end
 
-function PrintStream(index,stream)
+function PrintStream(index,stream,reloadImage)
 
   local title=stream["displayName"]
   local game=stream["game"]
@@ -156,7 +156,8 @@ function PrintStream(index,stream)
 	SetPosition(MeterStreamTitle(index),startX,startY)
   
 	-- Stream Game
-	SetTitle(MeterStreamGame(index),'Playing '..game)
+  local tags = FindTags(status, game)
+	SetTitle(MeterStreamGame(index),'Playing '..game..tags)
 	SetPosition(MeterStreamGame(index),startX,startY+18)
 	
 	-- Stream Viewers
@@ -164,9 +165,12 @@ function PrintStream(index,stream)
 	SetPosition(MeterStreamViewers(index),startX,startY+(18*2))
 	
 	-- Stream Image
-	SetMeasureURL(MeasureStreamImage(index),imageURL)
-	SetPosition(MeterStreamImage(index),5,startY+5)
-	SetSize(MeterStreamImage(index),40,40)
+  if reloadImage then
+    SetMeasureURL(MeasureStreamImage(index),imageURL)
+  end
+  SetPosition(MeterStreamImage(index),5,startY+5)
+  SetSize(MeterStreamImage(index),40,40)
+  
   
   -- Stream Sidebar
   SetPosition(MeterStreamSidebar(index),WIDTH-sidebarWidth,startY-3)
@@ -177,11 +181,11 @@ function PrintStream(index,stream)
   Hide(MeterStreamChevronDown(index))
   if not expanded then
     Show(MeterStreamChevronDown(index))
-    SetPosition(MeterStreamChevronDown(index),width-20,startY+60-20)
+    SetPosition(MeterStreamChevronDown(index),width-20,startY+40)
     SetSize(MeterStreamChevronDown(index),12,10)
   else 
     Show(MeterStreamChevronUp(index))
-    SetPosition(MeterStreamChevronUp(index),width-20,startY+60-20)
+    SetPosition(MeterStreamChevronUp(index),width-20,startY+40)
     SetSize(MeterStreamChevronUp(index),12,10)
   end
   
@@ -192,11 +196,38 @@ function PrintStream(index,stream)
     SetSize(MeterStreamDetails(index),WIDTH-sidebarWidth,60)
   else 
     SetTitle(MeterStreamDetails(index),"")
+    SetSize(MeterStreamDetails(index),0,0)
   end
   
   -- Stream Divider
 	SetPosition(MeterStreamDivider(index),0,startY+height-4)
   SetSize(MeterStreamDivider(index),WIDTH,1)
+end
+
+function FindTags(status, game)
+  local status = string.lower(status)
+  local tags = {}
+  
+    -- ALL
+  if string.match(status, "rerun") then table.insert(tags, "RERUN") end
+  
+  -- StarCraft II
+  if game == "StarCraft II" then
+    if string.match(status, "protoss") then table.insert(tags, "Protoss")
+    elseif string.match(status, "zerg") then table.insert(tags, "Zerg")
+    elseif string.match(status, "terran") then table.insert(tags, "Terran") end
+    
+    if string.match(status, "pvp") then table.insert(tags, "PvP")
+    elseif string.match(status, "pvt") then table.insert(tags, "PvT")
+    elseif string.match(status, "pvz") then table.insert(tags, "PvZ")
+    elseif string.match(status, "tvz") then table.insert(tags, "TvZ")
+    elseif string.match(status, "tvt") then table.insert(tags, "TvT")
+    elseif string.match(status, "zvz") then table.insert(tags, "ZvZ") end
+  end
+  
+  if #tags == 0 then return "" end
+  
+  return " - "..table.concat(tags, ", ")
 end
 
 function ExpandRow(index)
@@ -206,7 +237,7 @@ function ExpandRow(index)
     __expandedIndex=index
    end
    
-   PrintStreams()
+   PrintStreams(false)
 end
 
 -- Stream Group
