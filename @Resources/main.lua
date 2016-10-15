@@ -331,8 +331,6 @@ function Show(meter)
 	SKIN:Bang('!ShowMeter',meter)
 end
 
-
-
 function JSONParse(str, pos, end_delim)
   pos = pos or 1
   if pos > #str then error('Reached unexpected end of input.') end
