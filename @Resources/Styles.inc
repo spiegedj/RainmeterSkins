@@ -34,7 +34,7 @@ colorheadertext=252,255,245
 colortext=252,255,245
 backgroundcolor=0,0,0,1
 coloroptionshow=25,52,65,200
-dividercolor=255,255,255,90
+dividercolor=255,255,255,0
 
 
 [styleTitle]

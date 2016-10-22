@@ -3,10 +3,11 @@ function Initialize()
   -- Public Variables
 	measureTwitchFollows = SKIN:GetMeasure('MeasureTwitchFollows')
 	measureYoutubeSubscriptions = SKIN:GetMeasure('MeasureYoutubScubscriptions')
-  __currentlyLoaded = 0
   __streams={}
   __expandedIndex=-1
   __skinHeight=30
+  __pageNumber=0
+  __timestamp=""
   
   -- Constants
   MAX_COUNT=10
@@ -53,6 +54,7 @@ function ParseFeatured()
 	local text = ''
 
   __streams={}
+  local i = 0
 	for rawStream in raw:gmatch(matchStream) do
     local stream = {}
 		stream["game"] = rawStream:match(matchGame) or ""
@@ -62,9 +64,10 @@ function ParseFeatured()
 		stream["imageURL"] = rawStream:match(matchLogo) or ""
 		stream["link"] = "http://www.twitch.tv/"..stream["displayName"] or ""
 		
-    table.insert(__streams, stream)
+    __streams[index-1] = streamObj
 	end
   
+    __timestamp = os.date("%I:%M %p")
   PrintStreams(true)
 end
 
@@ -88,28 +91,35 @@ function ParseStreams()
     streamObj["imageURL"]=channel["logo"] or ""
     streamObj["link"]="http://www.twitch.tv/"..streamObj["displayName"] or ""
     
-    table.insert(__streams, streamObj)
+    __streams[index-1] = streamObj
+
 	end
   
+  __timestamp = os.date("%I:%M %p")
   PrintStreams(true)
 end
 
 function PrintStreams(reloadImages)
-  __currentlyLoaded = math.min(MEASURE_COUNT+1,#__streams)
+  HideAllStreams()
+
+  local startIndex = (__pageNumber*MEASURE_COUNT)
+  local endIndex = startIndex + MEASURE_COUNT - 1
+  endIndex = math.min(#__streams, endIndex)
+
   __skinHeight=30
-  local index=0
-  for key, stream in pairs(__streams) do
-    if __currentlyLoaded<=index then break end
-    PrintStream(index,stream,reloadImages)
-    index=index+1
+  local measureIndex=0
+  for i = startIndex,endIndex do
+    local stream = __streams[i]
+    PrintStream(measureIndex,stream,reloadImages)
+    measureIndex=measureIndex+1
   end
   
+  PrintNavigation()
   PrintLastUpdated()
 end
 
 function PrintLastUpdated()
-  local timeString = os.date("%I:%M %p")
-  SetTitle('MeterLastUpdated','Last Updated at '..timeString)
+  SetTitle('MeterLastUpdated','Last Updated at '..__timestamp)
   SetPosition('MeterLastUpdated',WIDTH,__skinHeight)
 end
 
@@ -215,7 +225,8 @@ function FindTags(status, game)
   if game == "StarCraft II" then
     if string.match(status, "protoss") then table.insert(tags, "Protoss")
     elseif string.match(status, "zerg") then table.insert(tags, "Zerg")
-    elseif string.match(status, "terran") then table.insert(tags, "Terran") end
+    elseif string.match(status, "terran") then table.insert(tags, "Terran")
+    elseif string.match(status, "random") then table.insert(tags, "Random") end
     
     if string.match(status, "pvp") then table.insert(tags, "PvP")
     elseif string.match(status, "pvt") then table.insert(tags, "PvT")
@@ -238,6 +249,34 @@ function ExpandRow(index)
    end
    
    PrintStreams(false)
+end
+
+function PrintNavigation()
+  SetSize('MeterNavPrevious', 12, 12)
+  SetSize('MeterNavNext', 12, 12)
+  SetPosition('MeterNavPrevious',0,__skinHeight)
+  SetPosition('MeterNavNext',16,__skinHeight)
+
+  Hide('MeterNavPrevious')
+  Hide('MeterNavNext')
+  if __pageNumber > 0 then
+    Show('MeterNavPrevious')
+  end
+
+  local maxPageCount = math.ceil(#__streams / MEASURE_COUNT)
+  if __pageNumber < (maxPageCount - 1) then
+    Show('MeterNavNext')
+  end
+end
+
+function NextPage()
+  __pageNumber = __pageNumber + 1
+  PrintStreams(true)
+end
+
+function PreviousPage()
+  __pageNumber = math.max(__pageNumber - 1, 0)
+    PrintStreams(true)
 end
 
 -- Stream Group
