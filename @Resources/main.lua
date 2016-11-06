@@ -254,8 +254,8 @@ end
 function PrintNavigation()
   SetSize('MeterNavPrevious', 12, 12)
   SetSize('MeterNavNext', 12, 12)
-  SetPosition('MeterNavPrevious',0,__skinHeight)
-  SetPosition('MeterNavNext',16,__skinHeight)
+  SetPosition('MeterNavPrevious',16,__skinHeight)
+  SetPosition('MeterNavNext',32,__skinHeight)
 
   Hide('MeterNavPrevious')
   Hide('MeterNavNext')

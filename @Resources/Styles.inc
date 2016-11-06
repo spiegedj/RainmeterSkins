@@ -29,9 +29,10 @@ transparent=0,0,0,0
 ; colorOptionShow=25,52,65,200
 ; dividerColor=145,170,157,90
 
-headercolor=0,0,0,1
-colorheadertext=252,255,245
-colortext=252,255,245
+colorheadertext=255,255,255,255
+headercolor=255,138,0,255
+;colorheadertext=252,255,245
+colortext=255,255,255
 backgroundcolor=0,0,0,1
 coloroptionshow=25,52,65,200
 dividercolor=255,255,255,0
@@ -39,13 +40,15 @@ dividercolor=255,255,255,0
 
 [styleTitle]
 StringAlign=Center
+StringStyle=Bold
 StringEffect=Shadow
 FontEffectColor=0,0,0,50
 FontColor=#colorHeaderText#
-FontFace=#fontName#
-FontSize=13
+FontFace=koverwatch
+FontSize=20
 AntiAlias=1
 ClipString=1
+
 
 [styleSubTitle]
 StringStyle=Bold
@@ -59,7 +62,7 @@ ClipString=1
 [styleText]
 FontColor=#colorText#
 FontFace=#fontName#
-FontSize=10
+FontSize=9
 AntiAlias=1
 ClipString=1
 
