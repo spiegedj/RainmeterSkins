@@ -37,6 +37,9 @@ backgroundcolor=0,0,0,1
 coloroptionshow=25,52,65,200
 dividercolor=255,255,255,0
 
+themeColor1=255,138,0,255
+themeColor2=252,255,245
+
 
 [styleTitle]
 StringAlign=Center
