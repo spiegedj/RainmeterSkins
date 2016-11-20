@@ -16,6 +16,10 @@ function SetTitle(meter,title)
 	SKIN:Bang('!SetOption',meter,'Text',title)
 end
 
+function SetTooltipText(meter,text)
+	SKIN:Bang('!SetOption',meter,'ToolTipText',text)
+end
+
 function SetSize(meter,width,height)
 	SKIN:Bang('!SetOption',meter,'W',width)
 	SKIN:Bang('!SetOption',meter,'H',height)
@@ -35,4 +39,12 @@ end
 
 function ShowGroup(group)
 	SKIN:Bang('!ShowMeterGroup',group)
+end
+
+function SetFormula(measure, value)
+	SKIN:Bang("!SetOption", measure, "formula", value);
+end
+
+function SetImageName(measure, name)
+	SKIN:Bang("!SetOption", measure, "ImageName", name);
 end

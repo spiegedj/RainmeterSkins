@@ -9,47 +9,44 @@ function Initialize()
 
   -- Globals
   __Stats = {}
+  __HeroStats = {}
   __SelectedHero = ""
-  __APIURL = "https://owapi.net/api/v2/u/Pikmet-1746/heroes/%s/competitive"
-
-  SelectHero('tracer')
+  __APIURL = "http://192.168.1.105:8080/owstats"
 
   -- heroes
-
   __Heroes = {
-      tracer= {
+      Tracer= {
           type = 'offensive'
       },
 
-      reaper= {
+      Reaper= {
           type = 'offensive'
       },
 
-      dva = {
-          type = 'tank'
-      },
-
-      mercy = {
+      Mercy = {
           type = 'support'
       },
 
-      lucio = {
+      Lucio = {
           type = 'support'
       },
 
-      ana = {
+      Ana = {
           type = 'support'
       }
   }
+  __Heroes['D.Va'] = { type = 'tank' }
 
-  HideGroup('stats')
+  SetMeasureURL('MeasureHeroStats', GetAPIURL())
+  SelectHero('Tracer')
 end
 
 function SelectHero(hero)
     __SelectedHero = hero
-
     HideGroup('stats')
-    SetMeasureURL('MeasureHeroStats', GetAPIURL())
+    if __Stats then
+        ParseHeroStats()
+    end
 end
 
 function ParseHeroStats()
@@ -59,129 +56,167 @@ function ParseHeroStats()
     end
 	
     __Stats = JSONParse(raw)
+    __HeroStats = __Stats.Heroes
 
     ShowGroup('stats')
-
-    local type = __Heroes[__SelectedHero]["type"]
-
     SetTitle("MeterStatsHero", __SelectedHero)
-    PrintGeneralStats()
-    if type == 'offensive' then
-        PrintOffensiveStats()
-    elseif type == 'support' then
-        PrintSupportStats()
-    end
-    PrintHeroStats()
+    PrintPlayerStats(__Stats.Player)
+    PrintSpecialStats(__HeroStats[__SelectedHero])
+    PrintNormalStats(__HeroStats[__SelectedHero])
 end
 
-function PrintGeneralStats()
-    local generalStats = __Stats["general_stats"]
-    local eliminations = generalStats["eliminations"]
-    local gamesPlayed = generalStats["games_played"]
+function Refresh()
+  HideGroup('stats')
+  SetMeasureURL('MeasureHeroStats', GetAPIURL())
+end
 
-    local eliminationsAvg = round(eliminations/gamesPlayed, 2)
-    local winRate = generalStats["win_percentage"]
+function PrintPlayerStats(playerStats)
+    local playerName = playerStats["Name"]
+    local skillRating = playerStats["Skill Rating"]
+    local skillRank = playerStats["Skill Rank"]
+    local winRate = playerStats["Win Rate"]
 
+    SetTitle("MeterPlayerName", playerName)
+    SetTitle("MeterSkillRating", skillRating)
+    SetTitle("MeterSkillRank", skillRank);
+    SetTitle("MeterWinRateOverall", winRate)
+end
+
+function PrintSpecialStats(heroStats)
+    local heroRank = heroStats["Hero Rank"]["Value"]
+    local record = heroStats["Record"]["Value"]
+    local winRate = heroStats["Win Rate"]["Value"]
+
+    -- Special Stats
+    SetTitle("MeterHeroRank", heroRank)
+    SetTitle("MeterRecord", record);
     SetTitle("MeterWinRate", winRate)
-    SetTitle("MeterEliminationsAvg", eliminationsAvg)
+
+    SetTitle("MeterEliminationsAvg", elim)
+    SetFormula("MeasureEliminationsPercentile", elimPercentile)
+
+    SetTitle("MeterDamage", dmg)
+    SetFormula("MeterDamagePercentile", dmgPercentile)
 
 end
 
-function PrintOffensiveStats()
-    ShowGroup('offensiveStats')
-    local generalStats = __Stats["general_stats"]
-    local eliminationsPerLife = generalStats["eliminations_per_life"]
-    local accuracy = generalStats["weapon_accuracy"]
+function PrintNormalStats(heroStats)
+    local typeStats = GetStats()
 
-    SetTitle("MeterTypeStatLabel1", "Eliminations/Life:")
-    SetTitle("MeterTypeStat1", eliminationsPerLife)
-    SetTitle("MeterTypeStatLabel2", "Accuracy:")
-    SetTitle("MeterTypeStat2", accuracy)
+    for i, statName in ipairs(typeStats) do
+        local statValue = heroStats[statName]["Value"]
+        local statPercentile = heroStats[statName]["Percentile"]["Value"]
+        local statPercentileText = heroStats[statName]["Percentile"]["Text"]
+
+        SetTitle("MeterStatValue"..i, statValue)
+        SetFormula("MeterStatPercentile"..i, statPercentile)
+        SetTitle("MeterStatLabel"..i, statName)
+        SetTooltipText("MeterStatPercentileBar"..i, statPercentileText)
+        PrintTrend(heroStats[statName], i)
+    end
 end
 
-function PrintSupportStats()
-    ShowGroup('supportStats')
-    local generalStats = __Stats["general_stats"]
-    local gamesPlayed = generalStats["games_played"]
-    local healingDone = generalStats["healing_done"]
-    local defensiveAssists = generalStats["defensive_assists"]
+function PrintTrend(stats, i)
+    local trendObj = stats.Trend
 
-    SetTitle("MeterTypeStatLabel1", "Healing:")
-    SetTitle("MeterTypeStat1", round(healingDone/gamesPlayed, 0))
-    SetTitle("MeterTypeStatLabel2", "Def Assists:")
-    SetTitle("MeterTypeStat2", round(defensiveAssists/gamesPlayed), 2)
-end
-
-function PrintHeroStats()
-    local generalStats = __Stats["general_stats"]
-    local heroStats = __Stats["hero_stats"]
-    local gamesPlayed = generalStats["games_played"]
-
-    if __SelectedHero == 'tracer' then
-        stats = GetTracerStats(heroStats, gamesPlayed)
-    elseif __SelectedHero == 'mercy' then
-        stats = GetMercyStats(heroStats, gamesPlayed)
-    elseif __SelectedHero == 'reaper' then
-        stats = GetReaperStats(heroStats, gamesPlayed)
-    elseif __SelectedHero == 'ana' then
-        stats = GetAnaStats(heroStats, gamesPlayed)
-    else 
-        HideGroup('HeroStats')
+    if not trendObj then
+        SetImageName("MeterStatTrend"..i, "")
         return
     end
 
-    SetTitle("MeterHeroStatLabel1", stats['label1'])
-    SetTitle("MeterHeroStat1", stats['stat1'])
-
-    SetTitle("MeterHeroStatLabel2", stats['label2'])
-    SetTitle("MeterHeroStat2", stats['stat2'])
+    if trendObj.IsIncreasing then
+        if trendObj.IsPositive then
+            SetImageName("MeterStatTrend"..i, "Images/UpGood.png")
+        else
+            SetImageName("MeterStatTrend"..i, "Images/UpBad.png")
+        end
+        SetTooltipText("MeterStatTrend"..i, trendObj.Text)
+    else
+        if trendObj.IsPositive then
+            SetImageName("MeterStatTrend"..i, "Images/DownGood.png")
+        else
+            SetImageName("MeterStatTrend"..i, "Images/DownBad.png")
+        end
+        SetTooltipText("MeterStatTrend"..i, trendObj.Text)
+    end
 end
 
-function GetTracerStats(heroStats, gamesPlayed)
-    local bombStuckTotal = heroStats["pulse_bombs_attached"]
-    local bombKillTotal = heroStats["pulse_bomb_kills"]
-    return {
-        label1 = 'Bombs Stuck:',
-        stat1 = round(bombStuckTotal/gamesPlayed, 2),
-        label2 = 'Bomb Kills:',
-        stat2 = round(bombKillTotal/gamesPlayed, 2)
+function GetStats()
+    local stats = {
+        offensive = {
+            "Eliminations", "Deaths",
+            "Damage", "Obj Kills",
+            "Weapon Acc", "Critical Hits"
+        }, 
+        support = {
+            "Healing", "Deaths",
+            "Def Assists", "Off Assists",
+            "Eliminations", "Weapon Acc"
+        },
+        tank = {
+            "Eliminations", "Deaths",
+            "Dmg Blocked", "Weapon Acc",
+            "Obj Kills", "Obj Time"
+        }
     }
+    local type = __Heroes[__SelectedHero]["type"]
+    local typeStats = stats[type]
+    AddHeroSpecificStats(typeStats)
+    return typeStats
 end
 
-function GetMercyStats(heroStats, gamesPlayed)
-    local playersResurrectedTotal = heroStats["players_resurrected"]
-    return {
-        label1 = 'Resurrects:',
-        stat1 = round(playersResurrectedTotal/gamesPlayed, 2),
-        label2 = '',
-        stat2 = ''
+function AddHeroSpecificStats(stats)
+    local heroSpecificStats = {
+        Tracer = {
+            "Bombs Stuck", "Bomb Kills",
+        }, 
+        Mercy = {
+            "Resurrects", "Solo Kills",
+        },
+        Reaper = {
+            "Blossom Kills", "Souls Gained",
+        },
+        Ana = {
+            "Boost Assists", "Enemies Slept",
+        },
+        Lucio = {
+            "Sound Barriers", "Env Kills"
+        }
     }
+    heroSpecificStats["D.Va"] =  {
+        "Destruct Kills", "Mech Recalls",
+    }
+
+    local statName1 = heroSpecificStats[__SelectedHero][1]
+    local statName2 = heroSpecificStats[__SelectedHero][2]
+
+    table.insert(stats, statName1)
+    table.insert(stats, statName2)
 end
 
-function GetReaperStats(heroStats, gamesPlayed)
-    local dbk = heroStats["death_blossom_kills"]
-    local sc = heroStats["souls_consumed"]
-    return {
-        label1 = 'Blossum Kills:',
-        stat1 = round(dbk/gamesPlayed, 2),
-        label2 = 'Souls Gained',
-        stat2 = round(sc/gamesPlayed, 2)
-    }
+function ShowTooltip(index)
+    local x = 0
+    if (index % 2) == 0 then
+        x = 30
+    end
+    local y = 220
+
+    local stats = GetStats()
+    local stat = stats[index]
+    local text = __HeroStats[__SelectedHero][stat]["Percentile"]["Text"]
+
+    SetPosition('MeterTooltipBackground', x, y)
+    SetPosition('MeterTooltipText', x, y)
+    SetTitle('MeterTooltipText', text)
+    --ShowGroup("Tooltip")
 end
 
-function GetAnaStats(HeroStats, gamesPlayed)
-    local nba = HeroStats["nano_boost_assists"]
-    local sa = HeroStats["scoped_accuracy"]
-    return {
-        label1 = 'Nano Boost Assists:',
-        stat1 = round(nba/gamesPlayed, 2),
-        label2 = 'Scoped Accuracy:',
-        stat2 = (sa*100).."%"
-    }
+function HideTooltip()
+    HideGroup("Tooltip")
 end
 
 function GetAPIURL()
-    return string.format(__APIURL, __SelectedHero)
+    return __APIURL
 end
 
 function round(num, idp)

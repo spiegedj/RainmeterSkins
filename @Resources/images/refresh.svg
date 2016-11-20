@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="48"
+   height="48"
+   viewBox="0 0 48 48"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.48.5 r10040"
+   sodipodi:docname="refresh.svg"
+   inkscape:export-filename="C:\Users\David\Documents\Rainmeter\Skins\myskins\@Resources\images\refresh.png"
+   inkscape:export-xdpi="30"
+   inkscape:export-ydpi="30">
+  <metadata
+     id="metadata12">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs10" />
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1920"
+     inkscape:window-height="1017"
+     id="namedview8"
+     showgrid="false"
+     inkscape:zoom="9.8333333"
+     inkscape:cx="41.062858"
+     inkscape:cy="23.966894"
+     inkscape:window-x="3832"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg2" />
+  <path
+     d="M 40.577054,7.4182719 C 36.33624,3.1627841 30.481276,0.52144692 23.995326,0.52144692 11.023425,0.52144692 0.54612101,11.028099 0.54612101,24 c 0,12.971901 10.47730399,23.478553 23.44920499,23.478553 10.932201,0 20.088837,-7.483789 22.686152,-17.608915 H 40.577054 C 38.155828,36.707767 31.669878,41.608915 23.995326,41.608915 14.2664,41.608915 6.3864111,33.728925 6.3864111,24 c 0,-9.728925 7.8799889,-17.6089148 17.6089149,-17.6089148 4.857126,0 9.215332,2.0250252 12.399611,5.2093038 l -9.464792,9.464792 H 47.473879 V 0.52144692 L 40.577054,7.4182719 z"
+     id="path4"
+     inkscape:connector-curvature="0"
+     style="fill:#ffffff"
+     inkscape:export-xdpi="30.666285"
+     inkscape:export-ydpi="30.666285" />
+  <path
+     d="M0 0h48v48h-48z"
+     fill="none"
+     id="path6" />
+</svg>

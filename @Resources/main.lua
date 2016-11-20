@@ -5,7 +5,7 @@ function Initialize()
   dofile(SKIN:GetVariable('@')..'Scripts\\Utils.lua')
 
   -- Public Variables
-	measureTwitchFollows = SKIN:GetMeasure('MeasureTwitchFollows')
+	measureTwitchParser = SKIN:GetMeasure('MeasureTwitchParser')
 	measureYoutubeSubscriptions = SKIN:GetMeasure('MeasureYoutubScubscriptions')
   __streams={}
   __expandedIndex=-1
@@ -39,7 +39,7 @@ function Initialize()
 end
 
 function ParseFeatured()
-	local raw = measureTwitchFollows:GetStringValue()
+	local raw = measureTwitchParser:GetStringValue()
 	if raw == '' then
 		return false
 	end
@@ -76,7 +76,7 @@ function ParseFeatured()
 end
 
 function ParseStreams()
-	local raw = measureTwitchFollows:GetStringValue()
+	local raw = measureTwitchParser:GetStringValue()
 	if raw == '' then
 		return false
 	end
@@ -119,7 +119,12 @@ function PrintStreams(reloadImages)
   end
   
   PrintNavigation()
-  PrintLastUpdated()
+  --PrintLastUpdated()
+end
+
+function Refresh()
+  HideAllStreams()
+	SKIN:Bang("!CommandMeasure", "MeasureTwitchParser", "Update");
 end
 
 function PrintLastUpdated()
@@ -171,8 +176,8 @@ function PrintStream(index,stream,reloadImage)
   
 	-- Stream Game
   local tags = FindTags(status, game)
-	SetTitle(MeterStreamGame(index),'Playing '..game..tags)
-	SetPosition(MeterStreamGame(index),startX,startY+18)
+  SetTitle(MeterStreamGame(index),'Playing '..game..tags)
+  SetPosition(MeterStreamGame(index),startX,startY+18)
 	
 	-- Stream Viewers
 	SetTitle(MeterStreamViewers(index),viewers..' viewers')
@@ -250,16 +255,16 @@ function ExpandRow(index)
     __expandedIndex=-1
    else 
     __expandedIndex=index
-   end
-   
+   end   
+
    PrintStreams(false)
 end
 
 function PrintNavigation()
   SetSize('MeterNavPrevious', 12, 12)
   SetSize('MeterNavNext', 12, 12)
-  SetPosition('MeterNavPrevious',16,__skinHeight)
-  SetPosition('MeterNavNext',32,__skinHeight)
+  SetPosition('MeterNavPrevious',16,6)
+  SetPosition('MeterNavNext',32,6)
 
   Hide('MeterNavPrevious')
   Hide('MeterNavNext')
