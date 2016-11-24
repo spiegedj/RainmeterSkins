@@ -35,17 +35,19 @@ function Initialize()
           type = 'support'
       }
   }
-  __Heroes['D.Va'] = { type = 'tank' }
+  __Heroes['D Va'] = { type = 'tank' }
 
   SetMeasureURL('MeasureHeroStats', GetAPIURL())
-  SelectHero('Tracer')
+  HideGroup('stats')
+  __SelectedHero = "Tracer"
 end
 
 function SelectHero(hero)
+    hero = string.gsub(hero, "%.", " ")
     __SelectedHero = hero
     HideGroup('stats')
     if __Stats then
-        ParseHeroStats()
+        PrintStats()
     end
 end
 
@@ -58,6 +60,10 @@ function ParseHeroStats()
     __Stats = JSONParse(raw)
     __HeroStats = __Stats.Heroes
 
+    PrintStats()
+end
+
+function PrintStats()
     ShowGroup('stats')
     SetTitle("MeterStatsHero", __SelectedHero)
     PrintPlayerStats(__Stats.Player)
@@ -76,7 +82,7 @@ function PrintPlayerStats(playerStats)
     local skillRank = playerStats["Skill Rank"]
     local winRate = playerStats["Win Rate"]
 
-    SetTitle("MeterPlayerName", playerName)
+    --SetTitle("MeterPlayerName", playerName)
     SetTitle("MeterSkillRating", skillRating)
     SetTitle("MeterSkillRank", skillRank);
     SetTitle("MeterWinRateOverall", winRate)
@@ -183,7 +189,7 @@ function AddHeroSpecificStats(stats)
             "Sound Barriers", "Env Kills"
         }
     }
-    heroSpecificStats["D.Va"] =  {
+    heroSpecificStats["D Va"] =  {
         "Destruct Kills", "Mech Recalls",
     }
 

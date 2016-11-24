@@ -16,5 +16,5 @@ ImageName="#@#images/refresh.png"
 W=16
 H=16
 X=(#width#-23)
-Y=5s
+Y=4
 LeftMouseUpAction=[!CommandMeasure MainScript Refresh()][!Update]
