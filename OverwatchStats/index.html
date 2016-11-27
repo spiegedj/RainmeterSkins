@@ -9,7 +9,7 @@
             function drawChart() {
                 $.ajax({
                     type: 'GET',
-                    url: "http://192.168.1.105:8080/skillrating", 
+                    url: "http://75.134.21.162:8080/playerstats?hero=Tracer&stat=bomb kills", 
                     dataType: "json"
                 }).done(function (rawData) {
                     for (var i = 0; i < rawData.length; i++)

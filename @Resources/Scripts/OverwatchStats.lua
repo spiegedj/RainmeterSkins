@@ -3,15 +3,19 @@ function Initialize()
   -- Imports
   dofile(SKIN:GetVariable('@')..'Scripts\\JSONParser.lua')
   dofile(SKIN:GetVariable('@')..'Scripts\\Utils.lua')
+  dofile(SKIN:GetVariable('@')..'Scripts\\Graph.lua')
 
   -- Measures
   measureHeroStats = SKIN:GetMeasure('MeasureHeroStats')
+  graphStats = SKIN:GetMeasure('MeasureGraphStats')
 
   -- Globals
   __Stats = {}
   __HeroStats = {}
   __SelectedHero = ""
-  __APIURL = "http://192.168.1.105:8080/owstats"
+  __APIURL = "http://75.134.21.162:8080/owstats"
+  __GraphURL = "http://75.134.21.162:8080/skillrating"
+  __playerStatURL = "http://75.134.21.162:8080/herostat"
 
   -- heroes
   __Heroes = {
@@ -36,10 +40,14 @@ function Initialize()
       }
   }
   __Heroes['D Va'] = { type = 'tank' }
+  __width=SKIN:GetVariable('width', 300)
 
   SetMeasureURL('MeasureHeroStats', GetAPIURL())
+  SetMeasureURL('MeasureGraphStats', __GraphURL)
   HideGroup('stats')
   __SelectedHero = "Tracer"
+
+  InitializeGraph(0, 500, __width, 100, "Skill Rating")
 end
 
 function SelectHero(hero)
@@ -49,6 +57,17 @@ function SelectHero(hero)
     if __Stats then
         PrintStats()
     end
+end
+
+function GraphStats()
+    local raw = graphStats:GetStringValue()
+    if raw == '' then
+        return false
+    end
+	
+    local data = JSONParse(raw)
+
+    Graph(data)
 end
 
 function ParseHeroStats()
@@ -119,6 +138,9 @@ function PrintNormalStats(heroStats)
         SetTitle("MeterStatLabel"..i, statName)
         SetTooltipText("MeterStatPercentileBar"..i, statPercentileText)
         PrintTrend(heroStats[statName], i)
+
+        statName = string.gsub(statName, " ", "%%20")
+        SKIN:Bang('!SetOption',"MeterStatPercentileBar"..i,'LeftMouseUpAction',"[!CommandMeasure MainScript GraphHeroStat('"..statName.."')]")
     end
 end
 
@@ -200,6 +222,10 @@ function AddHeroSpecificStats(stats)
     table.insert(stats, statName2)
 end
 
+function GraphHeroStat(statName)
+  SetMeasureURL('MeasureGraphStats', __playerStatURL.."?hero="..__SelectedHero.."&stat="..statName)
+end
+
 function ShowTooltip(index)
     local x = 0
     if (index % 2) == 0 then
@@ -223,9 +249,4 @@ end
 
 function GetAPIURL()
     return __APIURL
-end
-
-function round(num, idp)
-  local mult = 10^(idp or 0)
-  return math.floor(num * mult + 0.5) / mult
 end
