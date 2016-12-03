@@ -13,9 +13,9 @@ function Initialize()
   __Stats = {}
   __HeroStats = {}
   __SelectedHero = ""
-  __APIURL = "http://75.134.21.162:8080/owstats"
-  __GraphURL = "http://75.134.21.162:8080/skillrating"
-  __playerStatURL = "http://75.134.21.162:8080/herostat"
+  __APIURL = "http://96.42.56.89:8080/owstats"
+  __GraphURL = "http://96.42.56.89:8080/skillrating"
+  __playerStatURL = "http://96.42.56.89:8080/herostat"
 
   -- heroes
   __Heroes = {
@@ -47,7 +47,7 @@ function Initialize()
   HideGroup('stats')
   __SelectedHero = "Tracer"
 
-  InitializeGraph(0, 500, __width, 100, "Skill Rating")
+  InitializeGraph(0, 475, __width, 100, "Skill Rating")
 end
 
 function SelectHero(hero)
@@ -140,7 +140,7 @@ function PrintNormalStats(heroStats)
         PrintTrend(heroStats[statName], i)
 
         statName = string.gsub(statName, " ", "%%20")
-        SKIN:Bang('!SetOption',"MeterStatPercentileBar"..i,'LeftMouseUpAction',"[!CommandMeasure MainScript GraphHeroStat('"..statName.."')]")
+        SKIN:Bang('!SetOption',"MeterStatLabel"..i,'LeftMouseUpAction',"[!CommandMeasure MainScript GraphHeroStat('"..statName.."')]")
     end
 end
 

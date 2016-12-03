@@ -1,6 +1,7 @@
 function InitializeGraph(positionX, positionY, width, height, title)
-    LOOKBACK_DAYS = 5
+    LOOKBACK_DAYS = 6
 
+    __meterCount = 8
     __positionX = positionX
     __positionY = positionY
     __width = width
@@ -23,6 +24,7 @@ function InitializeGraph(positionX, positionY, width, height, title)
 end
 
 function Graph(data)
+    __Clear()
     local header1 = data[1][1]
     local header2 = data[1][2]
 
@@ -44,7 +46,7 @@ function Graph(data)
             y = prevY
         end
 
-        xPix, yPix = __ConvertCoordinateToPixels(x, y)
+        xPix, yPix = __ConvertCoordinateToPixels(x, __ParseNumber(y))
         __AddPointToPath(xPix, yPix)
         __DrawPoint(x, xPix, yPix, y)
         prevY = y
@@ -70,6 +72,15 @@ function __FindYValue(data, x)
     end
 
     return ''
+end
+
+function __Clear()
+    local i = 0
+    for i=0,__meterCount do
+        SetTitle('MeterLabelY'..i, "")
+        SetTitle('MeterLabelX'..i, "")
+        SKIN:Bang('!SetOption','MeterLineY'..i,'Shape','')
+    end
 end
 
 function __DrawYLabels()
@@ -106,11 +117,11 @@ function __DrawXLabel(label, i)
 end
 
 function __GetMaxMins(data)
-    __maxY = data[2][2]
-    __minY = data[2][2]
+    __maxY = __ParseNumber(data[2][2])
+    __minY = __ParseNumber(data[2][2])
 
     for i=2,#data do
-        local y = data[i][2]
+        local y = __ParseNumber(data[i][2])
 
         if y > __maxY then
             __maxY = y
@@ -122,9 +133,12 @@ function __GetMaxMins(data)
     end
 
     __intervalY = math.pow(10, math.floor(math.log10(__maxY - __minY)))
+    if ((__maxY - __minY) / __intervalY) > 5 then
+        __intervalY = __intervalY * 2
+    end
+
     __minY = math.floor(__minY / __intervalY) * __intervalY
     __maxY = math.ceil(__maxY / __intervalY) * __intervalY
-
     __rangeY = __maxY - __minY
 end
 
@@ -166,5 +180,14 @@ end
 
 function __ParseDate(dateString)
     local month,day,year = dateString:match("(%d+)/(%d+)/(%d+)")
+    if tonumber(day) < 10 then
+        day = '0'..day
+    end
     return month..'/'..day
+end
+
+function __ParseNumber(numberString)
+    numberString = string.gsub(numberString, ",", "")
+    numberString = string.gsub(numberString, "%%", "")
+    return tonumber(numberString)
 end
