@@ -42,14 +42,16 @@ function Graph(data)
         local x = i - 1
         local y = __FindYValue(data, __xValues[i])
 
-        if y == '' then
+        if y == '' or y == nil then
             y = prevY
         end
 
-        xPix, yPix = __ConvertCoordinateToPixels(x, __ParseNumber(y))
-        __AddPointToPath(xPix, yPix)
-        __DrawPoint(x, xPix, yPix, y)
-        prevY = y
+        if y ~= nil then
+            xPix, yPix = __ConvertCoordinateToPixels(x, __ParseNumber(y))
+            __AddPointToPath(xPix, yPix)
+            __DrawPoint(x, xPix, yPix, y)
+            prevY = y
+        end
     end
 
     __DrawPath('MeterGraphData', __path)

@@ -9,13 +9,15 @@
             function drawChart() {
                 $.ajax({
                     type: 'GET',
-                    url: "http://75.134.21.162:8080/playerstats?hero=Tracer&stat=bomb kills", 
+                    url: "http://96.42.56.89:8080/skillrating", 
                     dataType: "json"
                 }).done(function (rawData) {
                     for (var i = 0; i < rawData.length; i++)
                     {
+                        if (i === 0) { continue; }
                         var isoDateString = rawData[i][0];
                         rawData[i][0] = new Date(isoDateString);
+                        rawData[i][1] = Number(rawData[i][1]);
                     }
 
                     var data = google.visualization.arrayToDataTable(rawData);
