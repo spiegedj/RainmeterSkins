@@ -25,6 +25,7 @@ end
 
 function Graph(data)
     __Clear()
+    __BuildXValues()
     local header1 = data[1][1]
     local header2 = data[1][2]
 

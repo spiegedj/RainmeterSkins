@@ -49,9 +49,17 @@ function SetImageName(measure, name)
 	SKIN:Bang("!SetOption", measure, "ImageName", name);
 end
 
+function SetFontColor(measure, color)
+	SKIN:Bang('!SetOption', measure, 'FontColor', color)
+end
 
+function cleanString(s)
+	return trim(s or "")
+end
 
-
+function trim(s)
+  return (s:gsub("^%s*(.-)%s*$", "%1"))
+end
 
 function round(num, idp)
   local mult = 10^(idp or 0)

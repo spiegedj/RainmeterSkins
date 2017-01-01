@@ -3,10 +3,12 @@ function Initialize()
   -- Imports
   dofile(SKIN:GetVariable('@')..'Scripts\\JSONParser.lua')
   dofile(SKIN:GetVariable('@')..'Scripts\\Utils.lua')
+  dofile(SKIN:GetVariable('@')..'Scripts\\XMLParser.lua')
 
   -- Public Variables
 	measureTwitchParser = SKIN:GetMeasure('MeasureTwitchParser')
 	measureYoutubeSubscriptions = SKIN:GetMeasure('MeasureYoutubScubscriptions')
+  xmlParser = newParser()
   __streams={}
   __expandedIndex=-1
   __skinHeight=30
@@ -36,6 +38,58 @@ function Initialize()
     Hide(MeterStreamChevronUp(index))
     Hide(MeterStreamChevronDown(index))
   end
+end
+
+function ParseFriends()
+  measureSteamFriends = SKIN:GetMeasure('MeasureSteamFriends')
+	local raw = measureSteamFriends:GetStringValue()
+	if raw == '' then
+		return false
+	end
+
+  raw = string.gsub(raw, ">%s-<", "><")
+
+  local matchFriend = '<div class="friendBlock(.-)</div></div>'
+
+	local matchIDURL= '<a class="friendBlockLinkOverlay" href="(.-)"></a>'
+  local matchID = 'steamid":"(.-)","'
+  local matchImage = '<img src="(.-)">'
+  local matchName= '<div class="friendBlockContent">(.-)<br>'
+  local matchStatus= '<span class="friendSmallText">(.-)</span>'
+  local matchOnline = '<span class="linkFriend_in%-game">(.-)</span>'
+
+  __streams={}
+  index=1
+  for rawFriend in raw:gmatch(matchFriend) do
+    local streamObj = {}
+    local name = rawFriend:match(matchName)
+    local status = rawFriend:match(matchStatus)
+    local image = rawFriend:match(matchImage)
+    local online = rawFriend:match(matchOnline)
+
+    local game = ""
+    if online then
+      status = online:match('(.*)<br/>')
+      game = online:match('<br/>(.*)')
+      streamObj["statusColor"] = '144,186,60'
+    elseif trim(status) == 'Online' then
+      streamObj["statusColor"] = '87,203,222'
+    else 
+      streamObj["statusColor"] = '102,102,102'
+    end
+
+    streamObj["status"]=""
+    streamObj["game"]=cleanString(status)
+    streamObj["viewers"]=cleanString(game)
+    streamObj["displayName"]=cleanString(name)
+    streamObj["imageURL"]=cleanString(image)
+    streamObj["link"]=""
+    
+    __streams[index-1] = streamObj
+    index=index+1
+  end
+
+  PrintStreams(true)
 end
 
 function ParseFeatured()
@@ -89,8 +143,8 @@ function ParseStreams()
     local streamObj = {}
     local channel = stream["channel"]
     streamObj["status"]=channel["status"] or ""
-    streamObj["game"]=channel["game"] or ""
-    streamObj["viewers"]=stream["viewers"] or ""
+    streamObj["game"]='Playing ' .. (channel["game"] or "")
+    streamObj["viewers"]=(stream["viewers"] or "") .. ' viewers'
     streamObj["displayName"]=channel["display_name"] or ""
     streamObj["imageURL"]=channel["logo"] or ""
     streamObj["link"]="http://www.twitch.tv/"..streamObj["displayName"] or ""
@@ -147,6 +201,7 @@ function PrintStream(index,stream,reloadImage)
   local imageURL=stream["imageURL"]
   local link=stream["link"]
   local status=stream["status"]
+  local statusColor=stream["statusColor"]
 
   local expanded = (__expandedIndex == index)
 
@@ -173,15 +228,19 @@ function PrintStream(index,stream,reloadImage)
 	-- Stream Title
 	SetTitle(MeterStreamTitle(index),title)
 	SetPosition(MeterStreamTitle(index),startX,startY)
+  SetFontColor(MeterStreamTitle(index), statusColor)
+
   
 	-- Stream Game
   local tags = FindTags(status, game)
-  SetTitle(MeterStreamGame(index),'Playing '..game..tags)
+  SetTitle(MeterStreamGame(index),game..tags)
   SetPosition(MeterStreamGame(index),startX,startY+18)
+  SetFontColor(MeterStreamGame(index), statusColor)
 	
 	-- Stream Viewers
-	SetTitle(MeterStreamViewers(index),viewers..' viewers')
+	SetTitle(MeterStreamViewers(index),viewers)
 	SetPosition(MeterStreamViewers(index),startX,startY+(18*2))
+  SetFontColor(MeterStreamViewers(index), statusColor)
 	
 	-- Stream Image
   if reloadImage then
@@ -189,7 +248,6 @@ function PrintStream(index,stream,reloadImage)
   end
   SetPosition(MeterStreamImage(index),5,startY+5)
   SetSize(MeterStreamImage(index),40,40)
-  
   
   -- Stream Sidebar
   SetPosition(MeterStreamSidebar(index),WIDTH-sidebarWidth,startY-3)
