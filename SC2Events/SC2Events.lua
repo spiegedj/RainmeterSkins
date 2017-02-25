@@ -5,23 +5,18 @@ function Initialize()
     dofile(SKIN:GetVariable('@')..'Scripts\\StreamsBase.lua')
 
     -- Globals
-    __Friends = {}
+    __Events = {}
     __PlayerSummaries = {}
     __MeasureGetPlayerSummaries = SKIN:GetMeasure('MeasureGetPlayerSummaries')
 
     -- Enums
-    __StateCodes = {"Online","Busy","Away", "Snooze", "Looking to Play", "In Game"}
-    __StateCodes[0] = "Offline"
-
-
-    __streams={}
     __expandedIndex=-1
     __skinHeight=30
     __pageNumber=0
     __timestamp=""
 
     -- Constants
-    MAX_COUNT=10
+    MAX_COUNT=5
     MEASURE_COUNT = SKIN:GetVariable('measureCount', MAX_COUNT)
     WIDTH=SKIN:GetVariable('width', 300)
 
@@ -45,87 +40,77 @@ function Initialize()
     end
 end
 
-function GetFriends()
-    local measure = SKIN:GetMeasure('MeasureGetSteamFriends')
+function GetEvents()
+    local measure = SKIN:GetMeasure('MeasureGetSC2Events')
     local raw = measure:GetStringValue()
-    __Friends = JSONParse(raw)
-    local friendIdString = CreateFriendIdString(__Friends)
-    GetPlayerSummaries(friendIdString)
-end
-
-function CreateFriendIdString(friendDictionary)
-    local friendIdString = ""
-	for index,friendObj in pairs(friendDictionary["friendslist"]["friends"]) do
-        friendIdString = friendObj["steamid"] .. "," .. friendIdString
-	end
-    return friendIdString
-end
-
-function GetPlayerSummaries(friendIdString)
-    local playerSummaryURL = "http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=0CBFF8ED6037C926E8194B72676DBD04&steamids="
-    playerSummaryURL = playerSummaryURL .. friendIdString
-    SetMeasureURL('MeasureGetPlayerSummaries', playerSummaryURL)
-end
-
-function LoadPlayerSummaries()
-    local raw = __MeasureGetPlayerSummaries:GetStringValue()
-    local playerSummaryResponse = JSONParse(raw)["response"]["players"]
-
-    __PlayerSummaries = {}
-    for i, playerObj in pairs(playerSummaryResponse) do
-        __PlayerSummaries[i] = ConstructPlayerSummary(playerObj)
+    local response = JSONParse(raw)
+    
+    __Events = {}
+    for i, event in pairs(response["events"]) do
+        __Events[i] = ConstructEvent(event)
     end
 
-    SortPlayerSummaries(__PlayerSummaries)
+    SortEvents(__Events)
 
-    __streams = __PlayerSummaries
+    __streams = __Events
     PrintStreams(true)
 end
 
-function ConstructPlayerSummary(playerObj)
-    local playerSummary = {}
-    local name = playerObj["personaname"]
-    local state = playerObj["personastate"]
-    local image = playerObj["avatarmedium"]
-    local game = playerObj["gameextrainfo"]
-
-    -- Offline
-    playerSummary["statusColor"] = '102,102,102'
-
-    -- If Online
-    if state > 0 then
-        playerSummary["statusColor"] = '87,203,222'
+function Refresh()
+    for i, event in pairs(__Events) do
+        event["game"] = GetCountdownString(event["timeMS"])
     end
 
-    -- If In Game
-    if game then
-        state = 6
-        playerSummary["statusColor"] = '144,186,60'
-    end
-
-    playerSummary["stateCode"] = state
-
-    playerSummary["status"]=""
-    playerSummary["game"]=__StateCodes[state]
-    playerSummary["viewers"]=cleanString(game)
-    playerSummary["displayName"]=cleanString(name)
-    playerSummary["imageURL"]=cleanString(image)
-    playerSummary["link"]=""
-
-    return playerSummary
+    PrintStreams(false)
 end
 
-function SortPlayerSummaries(playerSummaries)
-    table.sort(playerSummaries, function (a, b)
+function ConstructEvent(event)
+    local eventSummary = {}
+    local name = event["name"]
+    local details = event["details"]
+    local timeMS = event["time"]
+    local image = event["image"]
+
+    local date = os.date("%B %d - %A @ %I:%M %p", timeMS/1000)
+    local daysFrom = os.difftime(timeMS/1000, os.time()) / (24 * 60 * 60)
+    local countdown = GetCountdownString(timeMS)
+
+    eventSummary["statusColor"] = '200,200,200'
+    if daysFrom < 3 then
+        eventSummary["statusColor"] = '87,203,222'
+        if daysFrom < 1 then
+            eventSummary["statusColor"] = '144,186,60'
+        end
+    end
+
+    eventSummary["status"]=""
+    eventSummary["tags"]=cleanString(details)
+    eventSummary["game"]=cleanString(countdown)
+    eventSummary["viewers"]=cleanString(date)
+    eventSummary["displayName"]=cleanString(name)..": "..cleanString(details)
+    eventSummary["imageURL"]=cleanString(image)
+    eventSummary["link"]=""
+
+    eventSummary["timeMS"]=timeMS
+
+    return eventSummary
+end
+
+function GetCountdownString(timeMS)
+    local daysFrom = os.difftime(timeMS/1000, os.time()) / (24 * 60 * 60)
+    local days = math.floor(daysFrom)
+    local hoursFrom = (daysFrom - days) * 24
+    local hours = math.floor(hoursFrom)
+    local minutesFrom = (hoursFrom - hours) * 60
+    local minutes = math.floor(minutesFrom)
+    return "Live in " .. days .. "d " .. hours .. "h " .. minutes .. "m"
+end
+
+function SortEvents(events)
+    table.sort(events, function (a, b)
         -- flip online and in game state codes
-        local compareValueA = a["stateCode"]
-        if a["stateCode"] == 0 then compareValueA = 6 end
-        if a["stateCode"] == 6 then compareValueA = 0 end
-
-        local compareValueB = b["stateCode"]
-        if b["stateCode"] == 0 then compareValueB = 6 end
-        if b["stateCode"] == 6 then compareValueB = 0 end
-
+        local compareValueA = a["timeMS"]
+        local compareValueB = b["timeMS"]
         return compareValueA < compareValueB
     end)
 end
@@ -177,7 +162,7 @@ function PrintStream(index,stream,reloadImage)
     height = 120
   end
 
-	startX = 50
+  startX = "60"
   startY = __skinHeight
   __skinHeight = __skinHeight + height
   
@@ -186,7 +171,7 @@ function PrintStream(index,stream,reloadImage)
   
 	-- Background
 	SetPosition(MeterBackground(index),0,startY-3)
-	SetSize(MeterBackground(index),width-sidebarWidth,height-2)
+    SetSize(MeterBackground(index),width,height-2)
   SetLeftMouseUpAction(MeterBackground(index), link)
 
 	-- Stream Title
@@ -194,10 +179,8 @@ function PrintStream(index,stream,reloadImage)
 	SetPosition(MeterStreamTitle(index),startX,startY)
   SetFontColor(MeterStreamTitle(index), statusColor)
 
-  
 	-- Stream Game
-  local tags = FindTags(status, game)
-  SetTitle(MeterStreamGame(index),game..tags)
+  SetTitle(MeterStreamGame(index),game)
   SetPosition(MeterStreamGame(index),startX,startY+18)
   SetFontColor(MeterStreamGame(index), statusColor)
 	
@@ -211,7 +194,8 @@ function PrintStream(index,stream,reloadImage)
     SetMeasureURL(MeasureStreamImage(index),imageURL)
   end
   SetPosition(MeterStreamImage(index),5,startY+5)
-  SetSize(MeterStreamImage(index),40,40)
+  SKIN:Bang('!SetOption',MeterStreamImage(index),'W',50)
+  --SetSize(MeterStreamImage(index),40,40)
   
   -- Stream Sidebar
   SetPosition(MeterStreamSidebar(index),WIDTH-sidebarWidth,startY-3)
@@ -220,15 +204,15 @@ function PrintStream(index,stream,reloadImage)
   -- Stream Chevrons
   Hide(MeterStreamChevronUp(index))
   Hide(MeterStreamChevronDown(index))
-  if not expanded then
-    Show(MeterStreamChevronDown(index))
-    SetPosition(MeterStreamChevronDown(index),width-20,startY+40)
-    SetSize(MeterStreamChevronDown(index),12,10)
-  else 
-    Show(MeterStreamChevronUp(index))
-    SetPosition(MeterStreamChevronUp(index),width-20,startY+40)
-    SetSize(MeterStreamChevronUp(index),12,10)
-  end
+--   if not expanded then
+--     Show(MeterStreamChevronDown(index))
+--     SetPosition(MeterStreamChevronDown(index),width-20,startY+40)
+--     SetSize(MeterStreamChevronDown(index),12,10)
+--   else 
+--     Show(MeterStreamChevronUp(index))
+--     SetPosition(MeterStreamChevronUp(index),width-20,startY+40)
+--     SetSize(MeterStreamChevronUp(index),12,10)
+--   end
   
   -- Stream Details
   if expanded then
@@ -243,33 +227,6 @@ function PrintStream(index,stream,reloadImage)
   -- Stream Divider
 	SetPosition(MeterStreamDivider(index),0,startY+height-4)
   SetSize(MeterStreamDivider(index),WIDTH,1)
-end
-
-function FindTags(status, game)
-  local status = string.lower(status)
-  local tags = {}
-  
-    -- ALL
-  if string.match(status, "rerun") then table.insert(tags, "RERUN") end
-  
-  -- StarCraft II
-  if game == "StarCraft II" then
-    if string.match(status, "protoss") then table.insert(tags, "Protoss")
-    elseif string.match(status, "zerg") then table.insert(tags, "Zerg")
-    elseif string.match(status, "terran") then table.insert(tags, "Terran")
-    elseif string.match(status, "random") then table.insert(tags, "Random") end
-    
-    if string.match(status, "pvp") then table.insert(tags, "PvP")
-    elseif string.match(status, "pvt") then table.insert(tags, "PvT")
-    elseif string.match(status, "pvz") then table.insert(tags, "PvZ")
-    elseif string.match(status, "tvz") then table.insert(tags, "TvZ")
-    elseif string.match(status, "tvt") then table.insert(tags, "TvT")
-    elseif string.match(status, "zvz") then table.insert(tags, "ZvZ") end
-  end
-  
-  if #tags == 0 then return "" end
-  
-  return " - "..table.concat(tags, ", ")
 end
 
 -- Navigation

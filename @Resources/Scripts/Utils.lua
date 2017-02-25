@@ -65,3 +65,11 @@ function round(num, idp)
   local mult = 10^(idp or 0)
   return math.floor(num * mult + 0.5) / mult
 end
+
+function parseDate(dateString)
+    local month,day,year = dateString:match("(%d+)/(%d+)/(%d+)")
+    if tonumber(day) < 10 then
+        day = '0'..day
+    end
+    return month..'/'..day
+end

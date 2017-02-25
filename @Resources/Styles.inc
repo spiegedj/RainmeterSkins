@@ -3,7 +3,7 @@ width=325
 textSize=8
 transparent=0,0,0,0
 
-@Include=#@#/Styles/StarWars.inc
+@Include=#@#/Styles/BlackAndWhite.inc
 
 [styleTitle]
 StringAlign=Center

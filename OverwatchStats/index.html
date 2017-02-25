@@ -10,6 +10,7 @@
                 $.ajax({
                     type: 'GET',
                     url: "http://96.42.56.89:8080/skillrating", 
+                   // url: "http://96.42.56.89:8080/herostat?hero=Tracer&stat=Eliminations", 
                     dataType: "json"
                 }).done(function (rawData) {
                     for (var i = 0; i < rawData.length; i++)
@@ -17,14 +18,19 @@
                         if (i === 0) { continue; }
                         var isoDateString = rawData[i][0];
                         rawData[i][0] = new Date(isoDateString);
-                        rawData[i][1] = Number(rawData[i][1]);
+                        rawData[i][1] = Number(rawData[i][1].replace('%', '').replace(',', ''));
                     }
 
                     var data = google.visualization.arrayToDataTable(rawData);
                     var options = {
                         title: 'Skill Rating',
                         curveType: 'function',
-                        legend: { position: 'bottom' }
+                        legend: { position: 'bottom' },
+                        hAxis: {
+                            gridlines: {
+                                count: 12
+                            },
+                        }
                     };
 
                     var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
@@ -35,7 +41,7 @@
         </script>
     </head>
     <body>
-        <div id="curve_chart" style="width: 900px; height: 500px"></div>
+        <div id="curve_chart" style="width: 1800px; height: 500px"></div>
         <div id="test"></div>
     </body>
 </html>

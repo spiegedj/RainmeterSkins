@@ -3,12 +3,12 @@ function Initialize()
   -- Imports
   dofile(SKIN:GetVariable('@')..'Scripts\\JSONParser.lua')
   dofile(SKIN:GetVariable('@')..'Scripts\\Utils.lua')
-  dofile(SKIN:GetVariable('@')..'Scripts\\XMLParser.lua')
+  dofile(SKIN:GetVariable('@')..'Scripts\\StreamsBase.lua')
 
   -- Public Variables
 	measureTwitchParser = SKIN:GetMeasure('MeasureTwitchParser')
 	measureYoutubeSubscriptions = SKIN:GetMeasure('MeasureYoutubScubscriptions')
-  xmlParser = newParser()
+
   __streams={}
   __expandedIndex=-1
   __skinHeight=30
@@ -38,6 +38,7 @@ function Initialize()
     Hide(MeterStreamChevronUp(index))
     Hide(MeterStreamChevronDown(index))
   end
+
 end
 
 function ParseFriends()
@@ -186,7 +187,7 @@ function PrintLastUpdated()
   SetPosition('MeterLastUpdated',WIDTH,__skinHeight)
 end
 
-function HideAllStreams(index)
+function HideAllStreams()
   for index=0,MEASURE_COUNT do
     groupName='StreamGroup'..index
     SKIN:Bang('!HideMeterGroup',groupName)
@@ -344,62 +345,4 @@ end
 function PreviousPage()
   __pageNumber = math.max(__pageNumber - 1, 0)
     PrintStreams(true)
-end
-
--- Stream Group
-function StreamGroup(index)
-  return 'StreamGroup'..index
-end
-
--- Stream Background
-function MeterBackground(index)
-  return 'MeterBackground'..index
-end
-
--- Stream Title
-function MeterStreamTitle(index)
-  return 'MeterStreamTitle'..index
-end
-
--- Stream Game
-function MeterStreamGame(index)
-  return 'MeterStreamGame'..index
-end
-
--- Stream Viewers
-function MeterStreamViewers(index)
-  return 'MeterStreamViewers'..index
-end
-
--- Stream Image
-function MeterStreamImage(index)
-  return 'MeterImage'..index
-end
-function MeasureStreamImage(index)
-  return 'MeasureImage'..index
-end
-
--- Stream Sidebar
-function MeterStreamSidebar(index)
-  return 'MeterSidebar'..index
-end
-
--- Stream Chevron Down
-function MeterStreamChevronDown(index)
-  return 'MeterChevronDown'..index
-end
-
--- Stream Chevron Up
-function MeterStreamChevronUp(index)
-  return 'MeterChevronUp'..index
-end
-
--- Stream Details
-function MeterStreamDetails(index)
-  return 'MeterDetails'..index
-end
-
--- Stream Divider
-function MeterStreamDivider(index)
-  return 'MeterDivider'..index
 end
