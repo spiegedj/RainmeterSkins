@@ -3,6 +3,7 @@
 [MeasureImage0]
 Measure=Plugin
 Plugin=WebParser
+URL=file://C:\Users\David\Documents\Rainmeter\Skins\myskins\@Resources\images\blank.png
 UpdateRate=10000000000000
 Download=1
 Debug=1
@@ -47,6 +48,7 @@ SolidColor=#dividerColor#
 [MeasureImage1]
 Measure=Plugin
 Plugin=WebParser
+URL=file://C:\Users\David\Documents\Rainmeter\Skins\myskins\@Resources\images\blank.png
 UpdateRate=10000000000000
 Download=1
 Debug=1
@@ -91,6 +93,7 @@ SolidColor=#dividerColor#
 [MeasureImage2]
 Measure=Plugin
 Plugin=WebParser
+URL=file://C:\Users\David\Documents\Rainmeter\Skins\myskins\@Resources\images\blank.png
 UpdateRate=10000000000000
 Download=1
 Debug=1
@@ -135,6 +138,7 @@ SolidColor=#dividerColor#
 [MeasureImage3]
 Measure=Plugin
 Plugin=WebParser
+URL=file://C:\Users\David\Documents\Rainmeter\Skins\myskins\@Resources\images\blank.png
 UpdateRate=10000000000000
 Download=1
 Debug=1
@@ -179,6 +183,7 @@ SolidColor=#dividerColor#
 [MeasureImage4]
 Measure=Plugin
 Plugin=WebParser
+URL=file://C:\Users\David\Documents\Rainmeter\Skins\myskins\@Resources\images\blank.png
 UpdateRate=10000000000000
 Download=1
 Debug=1
@@ -223,6 +228,7 @@ SolidColor=#dividerColor#
 [MeasureImage5]
 Measure=Plugin
 Plugin=WebParser
+URL=file://C:\Users\David\Documents\Rainmeter\Skins\myskins\@Resources\images\blank.png
 UpdateRate=10000000000000
 Download=1
 Debug=1
@@ -267,6 +273,7 @@ SolidColor=#dividerColor#
 [MeasureImage6]
 Measure=Plugin
 Plugin=WebParser
+URL=file://C:\Users\David\Documents\Rainmeter\Skins\myskins\@Resources\images\blank.png
 UpdateRate=10000000000000
 Download=1
 Debug=1
@@ -311,6 +318,7 @@ SolidColor=#dividerColor#
 [MeasureImage7]
 Measure=Plugin
 Plugin=WebParser
+URL=file://C:\Users\David\Documents\Rainmeter\Skins\myskins\@Resources\images\blank.png
 UpdateRate=10000000000000
 Download=1
 Debug=1
@@ -355,6 +363,7 @@ SolidColor=#dividerColor#
 [MeasureImage8]
 Measure=Plugin
 Plugin=WebParser
+URL=file://C:\Users\David\Documents\Rainmeter\Skins\myskins\@Resources\images\blank.png
 UpdateRate=10000000000000
 Download=1
 Debug=1
@@ -399,6 +408,7 @@ SolidColor=#dividerColor#
 [MeasureImage9]
 Measure=Plugin
 Plugin=WebParser
+URL=file://C:\Users\David\Documents\Rainmeter\Skins\myskins\@Resources\images\blank.png
 UpdateRate=10000000000000
 Download=1
 Debug=1
@@ -443,6 +453,7 @@ SolidColor=#dividerColor#
 [MeasureImage10]
 Measure=Plugin
 Plugin=WebParser
+URL=file://C:\Users\David\Documents\Rainmeter\Skins\myskins\@Resources\images\blank.png
 UpdateRate=10000000000000
 Download=1
 Debug=1
@@ -487,6 +498,7 @@ SolidColor=#dividerColor#
 [MeasureImage11]
 Measure=Plugin
 Plugin=WebParser
+URL=file://C:\Users\David\Documents\Rainmeter\Skins\myskins\@Resources\images\blank.png
 UpdateRate=10000000000000
 Download=1
 Debug=1
@@ -531,6 +543,7 @@ SolidColor=#dividerColor#
 [MeasureImage12]
 Measure=Plugin
 Plugin=WebParser
+URL=file://C:\Users\David\Documents\Rainmeter\Skins\myskins\@Resources\images\blank.png
 UpdateRate=10000000000000
 Download=1
 Debug=1
@@ -575,6 +588,7 @@ SolidColor=#dividerColor#
 [MeasureImage13]
 Measure=Plugin
 Plugin=WebParser
+URL=file://C:\Users\David\Documents\Rainmeter\Skins\myskins\@Resources\images\blank.png
 UpdateRate=10000000000000
 Download=1
 Debug=1
@@ -619,6 +633,7 @@ SolidColor=#dividerColor#
 [MeasureImage14]
 Measure=Plugin
 Plugin=WebParser
+URL=file://C:\Users\David\Documents\Rainmeter\Skins\myskins\@Resources\images\blank.png
 UpdateRate=10000000000000
 Download=1
 Debug=1
@@ -663,6 +678,7 @@ SolidColor=#dividerColor#
 [MeasureImage15]
 Measure=Plugin
 Plugin=WebParser
+URL=file://C:\Users\David\Documents\Rainmeter\Skins\myskins\@Resources\images\blank.png
 UpdateRate=10000000000000
 Download=1
 Debug=1
@@ -707,6 +723,7 @@ SolidColor=#dividerColor#
 [MeasureImage16]
 Measure=Plugin
 Plugin=WebParser
+URL=file://C:\Users\David\Documents\Rainmeter\Skins\myskins\@Resources\images\blank.png
 UpdateRate=10000000000000
 Download=1
 Debug=1
@@ -751,6 +768,7 @@ SolidColor=#dividerColor#
 [MeasureImage17]
 Measure=Plugin
 Plugin=WebParser
+URL=file://C:\Users\David\Documents\Rainmeter\Skins\myskins\@Resources\images\blank.png
 UpdateRate=10000000000000
 Download=1
 Debug=1
@@ -795,6 +813,7 @@ SolidColor=#dividerColor#
 [MeasureImage18]
 Measure=Plugin
 Plugin=WebParser
+URL=file://C:\Users\David\Documents\Rainmeter\Skins\myskins\@Resources\images\blank.png
 UpdateRate=10000000000000
 Download=1
 Debug=1
@@ -839,6 +858,7 @@ SolidColor=#dividerColor#
 [MeasureImage19]
 Measure=Plugin
 Plugin=WebParser
+URL=file://C:\Users\David\Documents\Rainmeter\Skins\myskins\@Resources\images\blank.png
 UpdateRate=10000000000000
 Download=1
 Debug=1
@@ -883,6 +903,7 @@ SolidColor=#dividerColor#
 [MeasureImage20]
 Measure=Plugin
 Plugin=WebParser
+URL=file://C:\Users\David\Documents\Rainmeter\Skins\myskins\@Resources\images\blank.png
 UpdateRate=10000000000000
 Download=1
 Debug=1
