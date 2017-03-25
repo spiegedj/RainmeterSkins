@@ -47,7 +47,7 @@ function Graph(data)
             y = prevY
         end
 
-        if y ~= nil then
+        if y ~= nil and y ~= '' then
             xPix, yPix = __ConvertCoordinateToPixels(x, __ParseNumber(y))
             __AddPointToPath(xPix, yPix)
             __DrawPoint(x, xPix, yPix, y)
@@ -185,6 +185,9 @@ function __ParseDate(dateString)
     local month,day,year = dateString:match("(%d+)/(%d+)/(%d+)")
     if tonumber(day) < 10 then
         day = '0'..day
+    end
+    if tonumber(month) < 10 then
+        month = '0'..month
     end
     return month..'/'..day
 end

@@ -15,8 +15,9 @@ function GetEvents()
     local response = JSONParse(raw)
     
     __Events = {}
+    local hash = {}
     for i, event in pairs(response["events"]) do
-        __Events[i] = ConstructEvent(event)
+        __Events[i] = ConstructEvent(event, hash)
     end
 
     SortEvents(__Events)
@@ -35,12 +36,16 @@ function Refresh()
     __ListManager:Print(false)
 end
 
-function ConstructEvent(event)
+function ConstructEvent(event, hash)
     local eventSummary = {}
     local name = event["name"]
     local details = event["details"]
-    local timeMS = event["time"]
+    local timeMS = event["time"] or 0
     local image = event["image"]
+
+    local key = name.."~"..details.."~"..timeMS
+    if hash[key] then return nil end
+    hash[key] = true
 
     local date = os.date("%B %d - %A @ %I:%M %p", timeMS/1000)
     local daysFrom = os.difftime(timeMS/1000, os.time()) / (24 * 60 * 60)
@@ -49,7 +54,7 @@ function ConstructEvent(event)
     eventSummary["statusColor"] = '200,200,200'
     if daysFrom < 3 then
         eventSummary["statusColor"] = '87,203,222'
-        if daysFrom < 1 then
+        if daysFrom < .1 then
             eventSummary["statusColor"] = '144,186,60'
         end
     end
@@ -66,6 +71,7 @@ function ConstructEvent(event)
 end
 
 function GetCountdownString(timeMS)
+    if timeMS == 0 then return "Live Now" end
     local daysFrom = os.difftime(timeMS/1000, os.time()) / (24 * 60 * 60)
     local days = math.floor(daysFrom)
     local hoursFrom = (daysFrom - days) * 24

@@ -4,7 +4,6 @@ ListManager = {
     __skinHeight = 30,
     __pageNumber = 0,
     __timestamp = "",
-    __maxCount = 5,
     __measureCount = 5,
     __width = 300,
     __timestamp = ""
@@ -17,10 +16,10 @@ function ListManager:new (o)
 
     dofile(SKIN:GetVariable('@')..'Scripts\\StreamsBase.lua')
 
-    self.__measureCount = SKIN:GetVariable('measureCount', self.__maxCount)
+    self.__measureCount = SKIN:GetVariable('measureCount', 5)
     self.__width = SKIN:GetVariable('width', 300)
 
-    for index=0,self.__maxCount do
+    for index=0,self.__measureCount do
         local groupName = StreamGroup(index)
 
         SKIN:Bang('!SetOption',MeterBackground(index),'Group',groupName)
