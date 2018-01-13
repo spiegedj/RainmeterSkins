@@ -123,7 +123,7 @@ function __GetMaxMins(data)
     __maxY = __ParseNumber(data[2][2])
     __minY = __ParseNumber(data[2][2])
 
-    for i=2,#data do
+    for i=(#data - 20),#data do
         local y = __ParseNumber(data[i][2])
 
         if y > __maxY then

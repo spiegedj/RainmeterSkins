@@ -58,7 +58,7 @@ function ConstructPlayerSummary(playerObj)
     local name = playerObj["personaname"]
     local state = playerObj["personastate"]
     local image = playerObj["avatarmedium"]
-    local game = playerObj["gameextrainfo"]
+    local gameid = playerObj["gameid"]
 
     -- Offline
     playerSummary["statusColor"] = '102,102,102'
@@ -69,7 +69,7 @@ function ConstructPlayerSummary(playerObj)
     end
 
     -- If In Game
-    if game then
+    if gameid then
         state = 6
         playerSummary["statusColor"] = '144,186,60'
     end
@@ -78,7 +78,7 @@ function ConstructPlayerSummary(playerObj)
 
     playerSummary["title"]=cleanString(name)
     playerSummary["line1"]=__StateCodes[state]
-    playerSummary["line2"]=cleanString(game)
+    playerSummary["line2"]=cleanString(playerObj["gameextrainfo"])
     playerSummary["imageURL"]=cleanString(image)
     playerSummary["link"]=""
 

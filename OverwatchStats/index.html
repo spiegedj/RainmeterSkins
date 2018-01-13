@@ -10,7 +10,7 @@
                 $.ajax({
                     type: 'GET',
                     url: "http://96.42.56.89:8080/skillrating", 
-                   // url: "http://96.42.56.89:8080/herostat?hero=Tracer&stat=Eliminations", 
+                   //url: "http://96.42.56.89:8080/herostat?hero=Tracer&stat=Damage", 
                     dataType: "json"
                 }).done(function (rawData) {
                     for (var i = 0; i < rawData.length; i++)
@@ -21,6 +21,12 @@
                         rawData[i][1] = Number(rawData[i][1].replace('%', '').replace(',', ''));
                     }
 
+                    var header = rawData.shift();
+                    rawData.sort(function(a, b) {
+                      return a[0].getTime() - b[0].getTime();
+                    });
+                    rawData.unshift(header);
+                    
                     var data = google.visualization.arrayToDataTable(rawData);
                     var options = {
                         title: 'Skill Rating',
@@ -36,6 +42,48 @@
                     var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
 
                     chart.draw(data, options);
+                    
+                    var days = [];
+                    var sr = rawData[1][1];
+                    for (var i = 1; i < rawData.length; i++)
+                    {
+                        var date = rawData[i][0];
+                        var currentSr = rawData[i][1];
+                        var change = currentSr - sr;
+                        
+                        var dataObj = days[date.getDay()] || {count:0,change:0};
+                        dataObj.count++;
+                        dataObj.change += change;
+                        days[date.getDay()] = dataObj;
+                        
+                        sr = currentSr;
+                    }
+                    
+                    var dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+                    for (var i = 0; i < days.length; i++) {
+                      console.log(dayNames[i] + ": " + days[i].count + " " + days[i].change);
+                    }
+                    
+                    days = [];
+                    sr = rawData[1][1];
+                    for (var i = 1; i < rawData.length; i++)
+                    {
+                        var date = rawData[i][0];
+                        var currentSr = rawData[i][1];
+                        var change = currentSr - sr;
+                        
+                        var dataObj = days[date.getHours()] || {count:0,change:0};
+                        dataObj.count++;
+                        dataObj.change += change;
+                        days[date.getHours()] = dataObj;
+                        
+                        sr = currentSr;
+                    }
+                    
+                    var dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+                    for (var i = 0; i < days.length; i++) {
+                      console.log(i + ":00: " + days[i].count + " " + days[i].change);
+                    }
                 });
             }
         </script>

@@ -135,11 +135,11 @@ function ListManager:PrintTile(index, listItem, reloadImage)
 
          -- Chevrons
         if not expanded then
-            Show(MeterStreamChevronDown(index))
+            --Show(MeterStreamChevronDown(index))
             SetPosition(MeterStreamChevronDown(index),width-20,startY+40)
             SetSize(MeterStreamChevronDown(index),12,10)
         else 
-            Show(MeterStreamChevronUp(index))
+            --Show(MeterStreamChevronUp(index))
             SetPosition(MeterStreamChevronUp(index),width-20,startY+40)
             SetSize(MeterStreamChevronUp(index),12,10)
         end
